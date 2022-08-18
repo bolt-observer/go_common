@@ -1,4 +1,4 @@
-package go_common
+package entities
 
 type Data struct {
 	PubKey            string `json:"pubkey"`
