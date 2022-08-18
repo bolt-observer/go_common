@@ -1,4 +1,4 @@
-package go_common
+package utils
 
 import (
 	"crypto/tls"
