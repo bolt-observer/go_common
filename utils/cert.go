@@ -10,6 +10,7 @@ import (
 
 func ObtainCert(endpoint string) string {
 	conf := &tls.Config{
+		MinVersion:         tls.VersionTLS11,
 		InsecureSkipVerify: true, // on purpose
 	}
 
