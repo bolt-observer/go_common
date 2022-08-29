@@ -16,6 +16,18 @@ func GetKeys[K comparable, V any](m map[K]V) []K {
 	return keys
 }
 
+func SetDiffGeneric[T comparable, V any](orig, changed map[T]V) map[T]V {
+	result := make(map[T]V)
+
+	for k, _ := range changed {
+		if val, exists := orig[k]; !exists {
+			result[k] = val
+		}
+	}
+
+	return result
+}
+
 func SetDiff[T comparable](orig, changed map[T]struct{}) map[T]struct{} {
 	result := make(map[T]struct{})
 
@@ -38,18 +50,14 @@ func Contains[T comparable](elems []T, v T) bool {
 }
 
 func AreElementsUnique[T comparable](elems []T) bool {
-	if len(elems) == len(GetUnique(elems)) {
-		return true
-	}
-
-	return false
+	return len(elems) == len(GetUnique(elems))
 }
 
 func GetUnique[T comparable](arr []T) []T {
 	occurred := map[T]bool{}
 	result := []T{}
 	for e := range arr {
-		if occurred[arr[e]] != true {
+		if !occurred[arr[e]] {
 			occurred[arr[e]] = true
 			result = append(result, arr[e])
 		}
