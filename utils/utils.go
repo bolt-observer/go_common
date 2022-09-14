@@ -19,9 +19,9 @@ func GetKeys[K comparable, V any](m map[K]V) []K {
 func SetDiffGeneric[T comparable, V any](orig, changed map[T]V) map[T]V {
 	result := make(map[T]V)
 
-	for k, _ := range changed {
-		if val, exists := orig[k]; !exists {
-			result[k] = val
+	for k := range changed {
+		if _, exists := orig[k]; !exists {
+			result[k] = changed[k]
 		}
 	}
 
