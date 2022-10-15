@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"encoding/base64"
 	"log"
 	"os"
+	"strings"
 
 	"golang.org/x/exp/constraints"
 )
@@ -14,6 +16,13 @@ func GetKeys[K comparable, V any](m map[K]V) []K {
 	}
 
 	return keys
+}
+
+func SafeBase64Decode(s string) ([]byte, error) {
+	s = strings.TrimRight(s, "=")
+	addendum := strings.Repeat("=", (4-(len(s)%4))%4)
+
+	return base64.StdEncoding.DecodeString(s + addendum)
 }
 
 func SetDiffGeneric[T comparable, V any](orig, changed map[T]V) map[T]V {
