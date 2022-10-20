@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/pem"
+	"time"
 
 	"github.com/golang/glog"
 )
@@ -14,14 +16,22 @@ func ObtainCert(endpoint string) string {
 		InsecureSkipVerify: true, // on purpose
 	}
 
-	conn, err := tls.Dial("tcp", endpoint, conf)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	d := tls.Dialer{
+		Config: conf,
+	}
+
+	conn, err := d.DialContext(ctx, "tcp", endpoint)
+	cancel()
 	if err != nil {
 		glog.Errorf("Could not connect to endpoint: %v", err)
 		return ""
 	}
+
 	defer conn.Close()
 
-	cert := conn.ConnectionState().PeerCertificates[0]
+	tlsConn := conn.(*tls.Conn)
+	cert := tlsConn.ConnectionState().PeerCertificates[0]
 
 	result := string(pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw}))
 
