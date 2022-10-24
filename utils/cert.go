@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/pem"
+	"strings"
 	"time"
 
 	"github.com/golang/glog"
@@ -14,6 +15,11 @@ func ObtainCert(endpoint string) string {
 	conf := &tls.Config{
 		MinVersion:         tls.VersionTLS11,
 		InsecureSkipVerify: true, // on purpose
+	}
+
+	split := strings.Split(endpoint, ":")
+	if len(split) <= 2 {
+		conf.ServerName = split[0]
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
